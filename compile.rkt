@@ -165,15 +165,18 @@
             (Label l1)))]
     ['boolean?
      (let ((l1 (gensym 'is_bool1))
-                     (l2 (gensym 'is_bool2)))
+           (l2 (gensym 'is_bool2))
+           (l3 (gensym 'is_bool3)))
        (seq (Cmp rax val-true)
             (Je l1)
             (Cmp rax val-false)
             (Je l2)
             (Mov rax val-false)
+            (Jmp l3)
             (Label l1)
             (Label l2)
-            (Mov rax val-true)))]))
+            (Mov rax val-true)))
+            (Label l3)]))
 
 ;; Op2 Expr Expr CEnv -> Asm
 (define (compile-prim2 p e1 e2 c)
