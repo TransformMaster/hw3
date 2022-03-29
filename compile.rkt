@@ -294,7 +294,7 @@
          (Label l2)))
   )
 
-(define (compile-case-bool cs e)
+(define (compile-case-bool cs e c)
   (match cs
     ['() (seq (Mov rax val-false))]
     [(cons a b) (match a
