@@ -6,6 +6,7 @@
 (define rax 'rax)
 (define rbx 'rbx) ; tmp used for type tag tests
 (define r8  'r8)  ; scratch
+(define r9  'r9)  ; scratch
 (define rsp 'rsp) ; stack
 (define rdi 'rdi) ; argument for C call
 
