@@ -342,8 +342,7 @@
     ['() (seq (Mov rax val-false))]
     [(cons a b) (let ((l1 (gensym 'checkin))
                       (l2 (gensym 'checkin)))
-                       (seq (Mov rax (value->bits a))
-                            (Mov r8 rax)
+                       (seq (Mov r8 (value->bits a))
                             (Push r8)
                             (compile-e e c)
                             (Pop r8)
