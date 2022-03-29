@@ -37,7 +37,7 @@
     [(Prim1 p e)     (compile-prim1 p e c)]
     [(Prim2 p e1 e2) (compile-prim2 p e1 e2 c)]
     ;; TODO: implement n-ary primitive +
-    [(PrimN p es)    (seq)]
+    [(PrimN p es)    (compile-primN p es c)]
     [(If e1 e2 e3)   (compile-if e1 e2 e3 c)]
     [(Begin e1 e2)   (compile-begin e1 e2 c)]
     ;; TODO: this only works for single variable binding,
@@ -181,6 +181,23 @@
        (Push rax)
        (compile-e e2 (cons #f c))
        (compile-op2 p c)))
+
+(define (compile-primN p es c)
+  (seq (compile-e* es c)
+       (compile-opN p es c)))
+
+(define (compile-opN p es c)
+  (match p
+    ['+
+     (match es
+       ['() (seq (Mov rax (value->bits 0)))]
+       [(cons e es)
+        (seq
+         (compile-opN p es c)
+         (Pop r8)
+         (assert-integer r8 c)
+         (Add rax r8)
+         )]]))
 
 ;; Op2 CEnv -> Asm
 (define (compile-op2 p c)
