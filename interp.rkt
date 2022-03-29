@@ -151,19 +151,12 @@
   (match cs
     ['() #f]
     [(cons a b) (match a
-                  [(Clause p b1) (if (check-err-in p r) #t (or #f (case-err-bool b r)))])])
+                  [(Clause p b1) (match (interp-env b1 r)
+                                   ['err #t]
+                                   [v (or #f (case-err-bool b r))])])])
   
   )
 
-(define (check-err-in p r)
-  (match p
-    ['() #f]
-    [(cons a b) (match (interp-env a r)
-                  ['err #t]
-                  [v (or #f (check-err-in b r))]
-                  )]
-    )
-  )
 
 (define (case-bool cs e r)
   (match cs
@@ -190,6 +183,6 @@
 (define (check-in p e r)
   (match p
     ['() #f]
-    [(cons a b) (if (equal? (interp-env a r) (interp-env e r)) #t (check-in b e r))]
+    [(cons a b) (if (equal? a (interp-env e r)) #t (check-in b e r))]
    )
   )
