@@ -46,7 +46,7 @@
     ;; TODO: implement let, let*, case, cond
     [(Let xs es e)   (seq)]
     [(Let* xs es e)  (seq)]
-    [(Case ev cs el) (compile-case e cs e1 c)]
+    [(Case ev cs el) (compile-case e cs el c)]
     [(Cond cs el)    (compile-cond cs el c)]))
 
 
