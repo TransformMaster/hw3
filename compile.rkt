@@ -175,8 +175,8 @@
             (Jmp l3)
             (Label l1)
             (Label l2)
-            (Mov rax val-true)))
-            (Label l3)]))
+            (Mov rax val-true)
+            (Label l3)))]))
 
 ;; Op2 Expr Expr CEnv -> Asm
 (define (compile-prim2 p e1 e2 c)
