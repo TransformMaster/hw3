@@ -67,7 +67,7 @@
        ['err 'err]
        [v (interp-env e2 (ext r x v))])]
     ;; TODO: implement let, let*
-    [(Let  xs es e) 'err]
+    [(Let  xs es e) (if (CheckN (interp*-env es r)) 'err (interp-env e (append (zip xs (interp*-env es r)) r)))]
     [(Let* xs es e) 'err]))
 
 
@@ -92,6 +92,7 @@
 ;; Env Id -> Value
 (define (lookup r x)
   (match r
+    ['() 'err]
     [(cons (list y val) r)
      (if (symbol=? x y)
          val
@@ -101,8 +102,12 @@
 (define (ext r x v)
   (cons (list x v) r))
 
+(define (zip a b)
+  (apply map list (list a b)))
+
 (define (CheckN es)
   (match es
+    ['err #t]
     ['() #f]
     [(cons e e1) (match e
                    ['err #t]

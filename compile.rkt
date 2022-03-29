@@ -45,7 +45,7 @@
     [(Let (list x) (list e1) e2)
      (compile-let1 x e1 e2 c)]
     ;; TODO: implement let, let*, case, cond
-    [(Let xs es e)   (seq)]
+    [(Let xs es e)   (compile-let2 xs es e c)]
     [(Let* xs es e)  (seq)]
     [(Case ev cs el) (compile-case ev cs el c)]
     [(Cond cs el)    (compile-cond cs el c)]))
@@ -202,6 +202,7 @@
          (Add rax r8)
          )])]))
 
+
 ;; Op2 CEnv -> Asm
 (define (compile-op2 p c)
   (match p
@@ -217,6 +218,23 @@
           (Sub r8 rax)
           (Mov rax r8))]))
 
+;; Id Expr Expr CEnv -> Asm
+;; NOTE: this is specialized for a single variable binding
+;; You should write another function for the general case
+(define (compile-let1 x e1 e2 c)
+  (seq (compile-e e1 c)
+       (Push rax)
+       (compile-e e2 (cons x c))
+       (Add rsp 8)))
+
+(define (compile-let2 xs es e c)
+  (match es
+    ['() (seq (compile-e e (append xs c))
+              (Add rsp 8*(length xs)))]
+    [(cons e es) (seq (compile-e e c)
+                      (Push rax)
+                      )]
+   ))
 
 
 ;; HINT: Another potentially helpful function that
@@ -385,16 +403,6 @@
 (define (compile-begin e1 e2 c)
   (seq (compile-e e1 c)
        (compile-e e2 c)))
-
-;; Id Expr Expr CEnv -> Asm
-;; NOTE: this is specialized for a single variable binding
-;; You should write another function for the general case
-(define (compile-let1 x e1 e2 c)
-  (seq (compile-e e1 c)
-       (Push rax)
-       (compile-e e2 (cons x c))
-       (Add rsp 8)))
-
 
 
 ;; CEnv -> Asm
