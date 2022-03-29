@@ -229,7 +229,7 @@
   (let ((l1 (gensym 'cond))
         (l2 (gensym 'cond)))
     (seq (compile-clause-bool cs c)
-         (Cmp 'rax val-false)
+         (Cmp rax val-false)
          (Je l1)
          (compile-clause-result cs c)
          (Jmp l2)
@@ -239,17 +239,17 @@
 
 (define (compile-clause-bool cs c)
   (match cs
-    ['() (seq (Mov 'rax val-false))]
+    ['() (seq (Mov rax val-false))]
     [(cons a b) (match a
                   [(Clause p b1) (let ((l1 (gensym 'clausebool))
                                        (l2 (gensym 'clausebool)))
                                    (seq (compile-e p c)
-                                      (Cmp 'rax val-false)
+                                      (Cmp rax val-false)
                                       (Jne l1)
                                       (compile-clause-bool b c)
                                       (Jmp l2)
                                       (Label l1)
-                                      (Mov 'rax val-true)
+                                      (Mov rax val-true)
                                       (Label l2)
                                       ))]
                   )
@@ -260,7 +260,7 @@
 
 (define (compile-clause-result cs c)
   (match cs
-    ['() (seq (Mov 'rax 10))]
+    ['() (seq (Mov rax 10))]
     [(cons a '()) (match a
                   [(Clause p b1) (seq (compile-e b1 c))]
                   )]
@@ -268,7 +268,7 @@
                   [(Clause p b1) (let ((l1 (gensym 'clauseresult))
                                        (l2 (gensym 'clauseresult)))
                                    (seq (compile-e p c)
-                                      (Cmp 'rax val-false)
+                                      (Cmp rax val-false)
                                       (Jne l1)
                                       (compile-clause-result b c)
                                       (Jmp l2)
@@ -285,7 +285,7 @@
   (let ((l1 (gensym 'case))
         (l2 (gensym 'case)))
     (seq (compile-case-bool cs e c)
-         (Cmp 'rax val-false)
+         (Cmp rax val-false)
          (Je l1)
          (compile-case-result cs e c)
          (Jmp l2)
@@ -294,19 +294,19 @@
          (Label l2)))
   )
 
-(define (compile-case-bool cs e c)
+(define (compile-case-bool cs e)
   (match cs
-    ['() (seq (Mov 'rax val-false))]
+    ['() (seq (Mov rax val-false))]
     [(cons a b) (match a
                   [(Clause p b1) (let ((l1 (gensym 'casebool))
                                        (l2 (gensym 'casebool)))
                                    (seq (compile-check-in p e c)
-                                        (Cmp 'rax val-false)
+                                        (Cmp rax val-false)
                                         (Jne l1)
                                         (compile-case-bool b e c)
                                         (Jmp l2)
                                         (Label l1)
-                                        (Mov 'rax val-true)
+                                        (Mov rax val-true)
                                         (Label l2)
                                          ))]
                   )
@@ -316,7 +316,7 @@
 
 (define (compile-case-result cs e c)
   (match cs
-    ['() (seq (Mov 'rax 10))]
+    ['() (seq (Mov rax 10))]
     [(cons a '()) (match a
                   [(Clause p b1) (seq (compile-e b1 c))]
                   )]
@@ -324,7 +324,7 @@
                   [(Clause p b1) (let ((l1 (gensym 'caseresult))
                                        (l2 (gensym 'caseresult)))
                                    (seq (compile-check-in p e c)
-                                        (Cmp 'rax val-false)
+                                        (Cmp rax val-false)
                                         (Jne l1)
                                         (compile-case-result b e c)
                                         (Jmp l2)
@@ -339,20 +339,20 @@
 
 (define (compile-check-in p e c)
   (match p
-    ['() (seq (Mov 'rax val-false))]
+    ['() (seq (Mov rax val-false))]
     [(cons a b) (let ((l1 (gensym 'checkin))
                       (l2 (gensym 'checkin)))
-                       (seq (compile-e a c)
-                            (Mov 'r8 'rax)
-                            (Push 'r8)
+                       (seq (Mov rax (value->bits a))
+                            (Mov r8 rax)
+                            (Push r8)
                             (compile-e e c)
-                            (Pop 'r8)
-                            (Cmp 'rax 'r8)
+                            (Pop r8)
+                            (Cmp rax r8)
                             (Je l1)
                             (compile-check-in b e c)
                             (Jmp l2)
                             (Label l1)
-                            (Mov 'rax val-true)
+                            (Mov rax val-true)
                             (Label l2)
        ))]
     )
