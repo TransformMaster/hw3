@@ -197,7 +197,7 @@
          (Pop r8)
          (assert-integer r8 c)
          (Add rax r8)
-         )]]))
+         )])]))
 
 ;; Op2 CEnv -> Asm
 (define (compile-op2 p c)
