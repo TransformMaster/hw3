@@ -233,6 +233,7 @@
               (Add rsp (* 8 (length xs))))]
     [(cons e es) (seq (compile-e e c)
                       (Push rax)
+                      (compile-let2 cs es e c)
                       )]
    ))
 
