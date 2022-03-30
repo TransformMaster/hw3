@@ -46,7 +46,7 @@
      (compile-let1 x e1 e2 c)]
     ;; TODO: implement let, let*, case, cond
     [(Let xs es e)   (compile-let2 xs es e c)]
-    [(Let* xs es e)  (seq)]
+    [(Let* xs es e)  (compile-let2-* xs es e c)]
     [(Case ev cs el) (compile-case ev cs el c)]
     [(Cond cs el)    (compile-cond cs el c)]))
 
@@ -237,7 +237,19 @@
                       )]
    ))
 
-
+(define (compile-let2-* xs es e1 c)
+  (match xs
+    ['() (seq (compile-e e1 c)
+              )]
+    [(cons x xs)
+     (match es
+    ['() (seq)]
+    [(cons e es) (seq (compile-e e c)
+                      (Push rax)
+                      (compile-let2-* xs es e1 (cons x c))
+                      )]
+   )]
+  ))
 ;; HINT: Another potentially helpful function that
 ;; emits code to execute each expression and push
 ;; all the values on to the stack, analogous to interp*-env
