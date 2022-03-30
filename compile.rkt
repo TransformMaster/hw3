@@ -229,7 +229,7 @@
 
 (define (compile-let2 xs es e c)
   (match es
-    ['() (seq (compile-e e (append xs c))
+    ['() (seq (compile-e e (append (reverse xs) c))
               (Add rsp (* 8 (length xs))))]
     [(cons e es) (seq (compile-e e c)
                       (Push rax)
