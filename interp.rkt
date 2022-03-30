@@ -68,7 +68,7 @@
        [v (interp-env e2 (ext r x v))])]
     ;; TODO: implement let, let*
     [(Let  xs es e) (if (CheckN (interp*-env es r)) 'err (interp-env e (append (zip xs (interp*-env es r)) r)))]
-    [(Let* xs es e) 'err]))
+    [(Let* xs es e) (if (CheckN (interp*-env-* es xs r)) 'err (interp-env e (append (zip xs (interp*-env-* es xs r)) r)))]))
 
 
 ;; HINT: this is a function that may come in handy.
@@ -79,6 +79,20 @@
 
 ;; type Answer* = 'err | [Listof Value]
 ;; [Listof Expr] Env -> Answer*
+(define (interp*-env-* es xs r)
+  (match xs
+    ['() '()]
+    [(cons x xs)
+  (match es
+    ['() '()]
+    [(cons e es)
+     (match (interp-env e r)
+       ['err 'err]
+       [v (match (interp*-env-* es xs (ext r x v))
+            ['err 'err]
+            [vs (cons v vs)])])])]))
+
+
 (define (interp*-env es r)
   (match es
     ['() '()]
